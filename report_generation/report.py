@@ -1,23 +1,63 @@
+import docx
+from docx.shared import Inches
+
 class Report:
+    """
+    A class to add elements to a Word report.
 
-    def __init__(self,projectData):
-        self.sections = []
-        
-    def add_section(self):
-        return None
+    ...
 
-    def add_header_and_footer(self):
-        return None
+    Attributes
+    ----------
+    doc : Document
+        an instance of the Document class from the docx module
+    project_data : dict
+        a dictionary containing the data for the project
 
-    def add_text(self):
-        return None
-    
-    def add_bullet_list(self):
-        return None
+    """
 
-    def add_image(self):
-        return None
+    def __init__(self, project_data):
+        """Constructs all the necessary attributes for the report object.
 
-    def add_table(self):
-        return None
-    
+        Parameters
+        ----------
+            project_data : dict
+                project data to be included in the report
+        """
+        self.doc = docx.Document()
+        self.project_data = project_data
+
+    def add_section(self, title):
+        """Adds a section with the given title to the document."""
+        self.doc.add_heading(title, level=1)
+
+    def add_header_and_footer(self, header, footer):
+        """Adds a header and footer to the document."""
+        section = self.doc.sections[0]
+        section.header.paragraphs[0].text = header
+        section.footer.paragraphs[0].text = footer
+
+    def add_text(self, text):
+        """Adds a paragraph of text to the document."""
+        self.doc.add_paragraph(text)
+
+    def add_bullet_list(self, items):
+        """Adds a bullet list to the document."""
+        for item in items:
+            self.doc.add_paragraph(item, style='ListBullet')
+
+    def add_image(self, img_path, width=Inches(1.25)):
+        """Adds an image to the document."""
+        self.doc.add_picture(img_path, width=width)
+
+    def add_table(self, data):
+        """Adds a table to the document."""
+        table = self.doc.add_table(rows=1, cols=len(data[0]))
+        for item in data:
+            cells = table.add_row().cells
+            for i in range(len(item)):
+                cells[i].text = str(item[i])
+
+    def save_report(self, filename):
+        """Saves the document to a file."""
+        self.doc.save(filename)
