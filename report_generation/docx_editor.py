@@ -2,6 +2,8 @@ from docx import Document
 import os
 from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
+import re
+from report_generation.interaction import Interaction
 
 
 class DocxEditor:
@@ -54,7 +56,7 @@ class DocxEditor:
                     new_para_xml.append(new_run)
                 break
 
-    def replace_text(self, term : str, replacement_text: str):
+    def replace_text_block(self, term : str, replacement_text: str):
         """
         Replace the paragraph containing the term with the replacement text.
         
@@ -82,3 +84,26 @@ class DocxEditor:
             base_name = new_file_name + os.path.splitext(self.file_path)[1]
         self.new_file_path = os.path.join(dir_name, base_name)
         self.doc.save(self.new_file_path)
+
+    def replace_specific_text(self, term: str, replacement_text: str):
+        """
+        Replace a specific text within the paragraph containing the term with the replacement text.
+
+        :param term: The term to search for in the document.
+        :param replacement_text: The text to replace the specific term.
+        """
+        for para in self.doc.paragraphs:
+            if term in para.text:
+                new_text = para.text.replace(term, replacement_text)
+                para.clear()
+                para.add_run(new_text)
+
+    def replace_key_words(self, data : Interaction , sheet_name : str, key_word = None):
+        pattern = r"Excel \(\w+\)"
+        for para in self.doc.paragraphs:
+            matches = re.findall(pattern, para.text)
+            for match in matches:
+                cell_reference = str(match.split("(")[1].split(")")[0])
+                print(cell_reference)              
+                replacement_text = str(data.get_data_at_cell(sheet_name, cell_reference))
+                self.replace_specific_text(match, replacement_text)

@@ -25,7 +25,15 @@ class Interaction:
         all_data = CalamineWorkbook.from_path(
             self.excel_file).get_sheet_by_name(sheet_name).to_python(skip_empty_area=False)
         row, col = self._cell_to_indices(cell)
-        return all_data[row][col]
+        if all_data[row][col] == "":
+            return 0
+        else:
+            if isinstance(all_data[row][col], str):
+                return all_data[row][col]
+            elif all_data[row][col] % 1 == 0:
+                return int(all_data[row][col])
+            else:
+                return all_data[row][col]
 
     def _cell_to_indices(self, cell):
         """
