@@ -4,7 +4,8 @@ from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 import re
 from report_generation.interaction import Interaction
-
+from docx.shared import Inches
+from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 class DocxEditor:
     """
@@ -99,6 +100,13 @@ class DocxEditor:
                 para.add_run(new_text)
 
     def replace_key_words(self, data : Interaction , sheet_name : str, key_word = None):
+        """
+        This function replaces key words in the document with data from an Excel sheet. It searches for patterns of the form "Excel (word)" in the document. For each match, it retrieves the corresponding data from the specified Excel sheet and replaces the match with this data.
+
+        :param data: An Interaction object which contains the data from the Excel sheet.
+        :param sheet_name: The name of the Excel sheet from which to retrieve data.
+        :param key_word: The key word to search for in the document. If not provided, the function will search for the pattern "Excel (word)".
+        """
         pattern = r"Excel \(\w+\)"
         for para in self.doc.paragraphs:
             matches = re.findall(pattern, para.text)
@@ -107,3 +115,64 @@ class DocxEditor:
                 print(cell_reference)              
                 replacement_text = str(data.get_data_at_cell(sheet_name, cell_reference))
                 self.replace_specific_text(match, replacement_text)
+
+    def replace_term_with_image(self, term: str):
+        """
+        Search for the term in the document and replace it with an image from the specified file path.
+        The image is scaled to fit the width of the page and a caption is added below the image.
+        The caption is formatted with the "Caption" style.
+
+        :param term: The term to search for in the document.
+        """
+        for i, para in enumerate(self.doc.paragraphs):
+            if term in para.text:
+                print(para.text)
+
+                file_name, img_cap = self.get_image_data(para.text)
+                img_path = self.find_image(file_name, r"C:\\Users\\vmylavarapu\\Pictures")
+                if img_path != None:
+
+                    para.clear()
+                    run = para.add_run()
+                    run.add_picture(img_path, width=Inches(6))
+                    # Add the caption to a new paragraph with the "Caption" style
+                    new_para_xml = parse_xml(r'<w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"></w:p>')
+                    para._p.addnext(new_para_xml)
+                    new_run = parse_xml(r'<w:r xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:t xml:space="preserve">%s</w:t></w:r>' % img_cap)
+                    new_para_xml.append(new_run)
+                    self.doc.paragraphs[i+1].style = self.doc.styles['Caption']
+                    break
+
+
+    @staticmethod
+    def get_image_data(info : str):
+        """
+        This function extracts the image name and caption from a string. The string is expected to be in the format "##Image##image_name##image_caption##".
+
+        :param info: The string containing the image name and caption.
+        :return: A tuple containing the image name and caption.
+        """
+        parts = info.split("##")
+
+        img_name = parts[2]
+        img_caption = parts[3]
+
+        return img_name, img_caption
+
+    @staticmethod
+    def find_image(image_name :str, folder_path : str):
+        """
+        This function searches for an image file in a specified folder. The image file is expected to have a specific name and be in one of the
+        following formats: .jpeg, .jpg, .png, .tiff.
+
+        :param image_name: The name of the image file to search for.
+        :param folder_path: The path of the folder in which to search for the image file.
+        :return: The path of the image file if found, otherwise None.
+        """
+        image_formats = [".jpeg", ".jpg", ".png",".tiff"]
+
+        for filename in os.listdir(folder_path):
+            if filename.startswith(image_name) and any(filename.endswith(format) for format in image_formats):
+                return os.path.join(folder_path, filename)
+
+        return None

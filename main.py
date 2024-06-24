@@ -16,5 +16,6 @@ if __name__ == "__main__":
     report = DocxEditor(wrd_fp)
     sheet_name = "SQ_Auditoreingaben "
 
-    report.replace_key_words(data , sheet_name) 
+    report.replace_key_words(data , sheet_name)
+    report.replace_term_with_image("##Image##")
     report.save_changes("OP_TEST_run")
