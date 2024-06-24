@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QFileDialog
+from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QVBoxLayout, QFileDialog, QLabel, QLineEdit
 
 class MyApp(QWidget):
     def __init__(self):
@@ -7,8 +7,13 @@ class MyApp(QWidget):
         # Inside the initUI() method
         self.resize(500, 100)  # Set width to 500 and height to 100
 
-
     def initUI(self):
+        # Create a QLabel for the output file name
+        outputFileNameLabel = QLabel('Output File Name: (optional)', self)
+
+        # Create a QLineEdit for the output file name
+        self.outputFileNameEdit = QLineEdit(self)
+
         # Create "Load Folder" button and connect it to a method
         loadFolderBtn = QPushButton('Load Folder', self)
         loadFolderBtn.clicked.connect(self.load_folder)
@@ -17,8 +22,10 @@ class MyApp(QWidget):
         generateReportBtn = QPushButton('Generate report', self)
         generateReportBtn.clicked.connect(self.generate_report)
 
-        # Create a vertical box layout and add the buttons
+        # Create a vertical box layout and add the widgets
         vbox = QVBoxLayout()
+        vbox.addWidget(outputFileNameLabel)
+        vbox.addWidget(self.outputFileNameEdit)
         vbox.addWidget(loadFolderBtn)
         vbox.addWidget(generateReportBtn)
 

@@ -1,11 +1,9 @@
 from docx import Document
 import os
-from docx.oxml.ns import nsdecls
 from docx.oxml import parse_xml
 import re
 from report_generation.interaction import Interaction
 from docx.shared import Inches
-from docx.enum.text import WD_PARAGRAPH_ALIGNMENT
 
 class DocxEditor:
     """
