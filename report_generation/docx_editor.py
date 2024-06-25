@@ -109,12 +109,11 @@ class DocxEditor:
         for para in self.doc.paragraphs:
             matches = re.findall(pattern, para.text)
             for match in matches:
-                cell_reference = str(match.split("(")[1].split(")")[0])
-                print(cell_reference)              
+                cell_reference = str(match.split("(")[1].split(")")[0])             
                 replacement_text = str(data.get_data_at_cell(sheet_name, cell_reference))
                 self.replace_specific_text(match, replacement_text)
 
-    def replace_term_with_image(self, term: str):
+    def replace_term_with_image(self, term: str, folder_path: str):
         """
         Search for the term in the document and replace it with an image from the specified file path.
         The image is scaled to fit the width of the page and a caption is added below the image.
@@ -124,10 +123,8 @@ class DocxEditor:
         """
         for i, para in enumerate(self.doc.paragraphs):
             if term in para.text:
-                print(para.text)
-
                 file_name, img_cap = self.get_image_data(para.text)
-                img_path = self.find_image(file_name, r"C:\\Users\\vmylavarapu\\Pictures")
+                img_path = self.find_image(file_name, folder_path)
                 if img_path != None:
 
                     para.clear()
