@@ -131,12 +131,11 @@ class DocxEditor:
                     run = para.add_run()
                     run.add_picture(img_path, width=Inches(6))
                     # Add the caption to a new paragraph with the "Caption" style
-                    new_para_xml = parse_xml(r'<w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"></w:p>')
+                    new_para_xml = parse_xml(r'<w:p xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:pPr><w:pStyle w:val="Caption"/></w:pPr></w:p>')
                     para._p.addnext(new_para_xml)
                     new_run = parse_xml(r'<w:r xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main"><w:t xml:space="preserve">%s</w:t></w:r>' % img_cap)
                     new_para_xml.append(new_run)
-                    self.doc.paragraphs[i+1].style = self.doc.styles['Caption']
-                    break
+                    #self.doc.paragraphs[i+1].style = self.doc.styles['Caption']
 
 
     @staticmethod

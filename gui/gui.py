@@ -32,7 +32,6 @@ class MyApp(QWidget):
 
     def load_folder(self):
         self.folder_path = QFileDialog.getExistingDirectory(self, 'Select Folder')
-        print(f'Folder path: {self.folder_path}')
         self._check_folder_structure(self.folder_path)
 
     def _check_folder_structure(self, folder_path):
@@ -53,7 +52,6 @@ class MyApp(QWidget):
         images_folder = self.search_folder(self.folder_path, 'Images')
         report.replace_term_with_image("##Image##",images_folder)
         if self.outputFileNameEdit.text() != "":
-            print("name:", self.outputFileNameEdit.text())
             report.save_changes(self.outputFileNameEdit.text())
         else:
             report.save_changes("Output")
