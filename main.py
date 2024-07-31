@@ -9,13 +9,12 @@ def main():
 
 if __name__ == "__main__":
     main()
-    excel_fp = r"C:\Users\vmylavarapu\Buro Happold\Germany Computational Team - General\3 Development\3 Cities\DGNB Precheck Report Generator\Q20_Gew.Tab_Mehrsprachig_230524_gesch.xlsx"
-    wrd_fp = r"C:\Users\vmylavarapu\Desktop\240410_Elbhafen_DGNB-SQ20-Pre-Check.docx"
+    excel_fp = r".\Test Folder\Q20_Gew.Tab_Mehrsprachig_230524_gesch.xlsm"
+    wrd_fp = r".\Test Folder\240410_Elbhafen_DGNB-SQ20-Pre-Check.docx"
     
     data = Interaction(excel_fp)
     report = DocxEditor(wrd_fp)
     sheet_name = "SQ_Auditoreingaben "
 
     report.replace_key_words(data , sheet_name)
-    report.replace_term_with_image("##Image##")
     report.save_changes("OP_TEST_run")
